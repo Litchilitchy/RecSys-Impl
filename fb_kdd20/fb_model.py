@@ -3,33 +3,42 @@ import tensorflow.keras.backend as K
 
 class TwoTowerModel_fb2020(tf.keras.models.Model):
 
-    def __init__(self):
+    def __init__(self,input_shape=None):
         super().__init__()
-        self.t1a = tf.keras.layers.Dense(300, activation='relu')
+      #  self.in1 = tf.keras.layers.Input(shape=(4,))
+
+        self.t1a = tf.keras.layers.Dense(300, activation='relu',input_shape=(4,))
         self.t1b = tf.keras.layers.Dense(300, activation='relu')
         self.t1c = tf.keras.layers.Dense(128, activation='relu')
         self.t1v = tf.keras.layers.Lambda(lambda x: tf.nn.l2_normalize(x, axis=1))
 
-        self.t2a = tf.keras.layers.Dense(300, activation='relu')
+      #  self.in2 = tf.keras.layers.Input(shape=(3,))
+        self.t2a = tf.keras.layers.Dense(300, activation='relu',input_shape=(3,))
         self.t2b = tf.keras.layers.Dense(300, activation='relu')
         self.t2c = tf.keras.layers.Dense(128, activation='relu')
         self.t2v = tf.keras.layers.Lambda(lambda x: tf.nn.l2_normalize(x, axis=1))
+
+       # self.in3 = tf.keras.layers.Input(shape=(3,))
 
         self.ip = tf.keras.layers.Dot(axes=1)
         self.out = tf.keras.layers.Subtract()
 
     def call(self, inputs, training=None, mask=None):
         u, i , i_= inputs[0], inputs[1], inputs[2]
+
+       # u = self.in1(u)
         u = self.t1a(u)
         u = self.t1b(u)
         u = self.t1c(u)
         u = self.t1v(u)
 
+       # i = self.in2(i)
         i = self.t2a(i)
         i = self.t2b(i)
         i = self.t2c(i)
         i = self.t2v(i)
 
+     #   i_ = self.in3(i_)
         i_ = self.t2a(i_)
         i_ = self.t2b(i_)
         i_ = self.t2c(i_)
